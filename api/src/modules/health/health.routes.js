@@ -1,8 +1,9 @@
 // src/modules/health/health.routes.js
 import { Router } from 'express';
-import { prisma } from '../../prisma.js';
+import pg from 'pg';
 import { analyticsClient } from '../../services/analyticsClient.js';
 import { ok } from '../../utils/apiResponse.js';
+import { env } from '../../config/env.js';
 import { logger } from '../../utils/logger.js';
 
 const router = Router();
@@ -15,16 +16,20 @@ router.get('/health', async (req, res) => {
     timestamp: new Date().toISOString(),
   };
 
-  // Database check
+  // ── Database check via native pg (works before any Prisma models exist)
+  const client = new pg.Client({ connectionString: env.DATABASE_URL });
   try {
-    await prisma.$queryRaw`SELECT 1`;
+    await client.connect();
+    await client.query('SELECT 1');
     result.database = 'ok';
   } catch (err) {
     logger.error({ err }, 'Health check: database down');
     result.database = 'down';
+  } finally {
+    await client.end().catch(() => {});
   }
 
-  // Flask check (optional, non-blocking)
+  // ── Flask check (optional, non-blocking)
   try {
     const { data } = await analyticsClient.get('/health');
     result.analytics = data?.status === 'ok' ? 'ok' : 'degraded';
