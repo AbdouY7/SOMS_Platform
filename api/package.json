@@ -1,0 +1,51 @@
+{
+  "name": "soms-api",
+  "version": "1.0.0",
+  "description": "SOMS Express API (ESM)",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "nodemon --watch src --ext js,json src/server.js",
+    "start": "node src/server.js",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "prisma studio",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.13.0",
+    "argon2": "^0.31.2",
+    "axios": "^1.6.8",
+    "cloudinary": "^2.2.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.5.5",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
+    "file-type": "^19.0.0",
+    "helmet": "^7.1.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pino": "^9.0.0",
+    "pino-http": "^10.0.0",
+    "zod": "^3.23.4"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.5.0",
+    "nodemon": "^3.1.0",
+    "pino-pretty": "^11.0.0",
+    "prisma": "^5.13.0",
+    "supertest": "^7.0.0",
+    "vitest": "^1.5.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

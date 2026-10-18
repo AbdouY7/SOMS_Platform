@@ -1,0 +1,4 @@
+# GeoJSON placeholder
+# System 5 will add the Algeria wilayas GeoJSON file here.
+# The file must have a `code` property on each feature matching wilayas.code (e.g. "16").
+# Source and licence must be documented in the README before using.

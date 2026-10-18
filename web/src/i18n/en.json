@@ -1,0 +1,85 @@
+{
+  "common": {
+    "appName": "SOMS",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "noData": "No data",
+    "insufficientData": "Insufficient data",
+    "demoData": "Demo data",
+    "demoBanner": "⚠️ You are viewing demo data — not included in real reports",
+    "dataSource": {
+      "public_manual": "Manual entry",
+      "csv_import": "CSV import",
+      "official_api": "Official API",
+      "synthetic_demo": "Demo data"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
+  },
+  "nav": {
+    "hub": "Hub",
+    "geo": "Geo Analytics",
+    "growth": "Growth",
+    "scheduler": "Scheduler",
+    "forecast": "Forecast",
+    "reports": "Reports",
+    "imports": "Data Import",
+    "posts": "Posts",
+    "settings": "Settings",
+    "profile": "My Profile",
+    "logout": "Log out",
+    "admin": {
+      "dashboard": "Dashboard",
+      "companies": "Companies",
+      "requests": "Requests",
+      "users": "Users",
+      "logs": "Activity Log",
+      "settings": "System Settings",
+      "demoData": "Demo Data"
+    }
+  },
+  "auth": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "email": "Email address",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "invalidCredentials": "Invalid email or password",
+    "accountLocked": "Account temporarily locked, please try again later",
+    "accountInactive": "Account is inactive",
+    "companyInactive": "Company is inactive",
+    "requestAccess": "Request access",
+    "changePassword": {
+      "title": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password"
+    }
+  },
+  "errors": {
+    "404": {
+      "title": "Page not found",
+      "message": "The page you are looking for does not exist",
+      "back": "Back to home"
+    },
+    "403": {
+      "title": "Access denied",
+      "message": "You are not authorized to access this page",
+      "back": "Go back"
+    }
+  }
+}

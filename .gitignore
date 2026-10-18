@@ -1,0 +1,45 @@
+# Environment files - NEVER commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Prisma
+api/prisma/migrations/dev.db
+
+# Temp uploads
+api/tmp/
+
+# Test coverage
+coverage/
+.nyc_output/
+htmlcov/
+
+# pgdata (never commit DB data)
+pgdata/

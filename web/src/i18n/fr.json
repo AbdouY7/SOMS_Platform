@@ -1,0 +1,85 @@
+{
+  "common": {
+    "appName": "SOMS",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "noData": "Aucune donnée",
+    "insufficientData": "Données insuffisantes",
+    "demoData": "Données de démonstration",
+    "demoBanner": "⚠️ Vous consultez des données de démonstration — non incluses dans les vrais rapports",
+    "dataSource": {
+      "public_manual": "Saisie manuelle",
+      "csv_import": "Import CSV",
+      "official_api": "API officielle",
+      "synthetic_demo": "Données démo"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page",
+      "of": "sur"
+    }
+  },
+  "nav": {
+    "hub": "Hub",
+    "geo": "Géo Analytics",
+    "growth": "Croissance",
+    "scheduler": "Planificateur",
+    "forecast": "Prévisions",
+    "reports": "Rapports",
+    "imports": "Importation",
+    "posts": "Publications",
+    "settings": "Paramètres",
+    "profile": "Mon profil",
+    "logout": "Déconnexion",
+    "admin": {
+      "dashboard": "Tableau de bord",
+      "companies": "Entreprises",
+      "requests": "Demandes",
+      "users": "Utilisateurs",
+      "logs": "Journal d'activité",
+      "settings": "Paramètres système",
+      "demoData": "Données démo"
+    }
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "invalidCredentials": "E-mail ou mot de passe incorrect",
+    "accountLocked": "Compte temporairement bloqué, veuillez réessayer plus tard",
+    "accountInactive": "Compte inactif",
+    "companyInactive": "Entreprise inactive",
+    "requestAccess": "Demander l'accès",
+    "changePassword": {
+      "title": "Changer le mot de passe",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe"
+    }
+  },
+  "errors": {
+    "404": {
+      "title": "Page introuvable",
+      "message": "La page que vous cherchez n'existe pas",
+      "back": "Retour à l'accueil"
+    },
+    "403": {
+      "title": "Accès refusé",
+      "message": "Vous n'êtes pas autorisé à accéder à cette page",
+      "back": "Retour"
+    }
+  }
+}
