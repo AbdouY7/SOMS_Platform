@@ -1,6 +1,5 @@
 // src/layouts/DashboardLayout.jsx
 // Sidebar + topbar + content area. RTL-ready using logical CSS properties.
-// System 1 will add AuthProvider/ProtectedRoute wrappers.
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -11,18 +10,19 @@ import {
   Users, ClipboardList, Sliders, Database,
 } from 'lucide-react';
 import { LanguageSwitcher } from '../components/ui/LanguageSwitcher.jsx';
+import { useAuth } from '../features/auth/AuthProvider.jsx';
 import { clsx } from 'clsx';
+import toast from 'react-hot-toast';
 
-// Navigation items filtered by role (UX only — server enforces RBAC)
 const NAV_COMPANY = [
-  { to: '/hub',                key: 'nav.hub',       Icon: LayoutDashboard },
-  { to: '/analytics/geo',      key: 'nav.geo',       Icon: Globe },
-  { to: '/analytics/growth',   key: 'nav.growth',    Icon: TrendingUp },
-  { to: '/analytics/scheduler',key: 'nav.scheduler', Icon: CalendarDays },
-  { to: '/forecast',           key: 'nav.forecast',  Icon: LineChart },
-  { to: '/reports',            key: 'nav.reports',   Icon: FileText },
-  { to: '/data/imports',       key: 'nav.imports',   Icon: Upload },
-  { to: '/data/posts',         key: 'nav.posts',     Icon: FileImage },
+  { to: '/hub',                  key: 'nav.hub',       Icon: LayoutDashboard },
+  { to: '/analytics/geo',        key: 'nav.geo',       Icon: Globe },
+  { to: '/analytics/growth',     key: 'nav.growth',    Icon: TrendingUp },
+  { to: '/analytics/scheduler',  key: 'nav.scheduler', Icon: CalendarDays },
+  { to: '/forecast',             key: 'nav.forecast',  Icon: LineChart },
+  { to: '/reports',              key: 'nav.reports',   Icon: FileText },
+  { to: '/data/imports',         key: 'nav.imports',   Icon: Upload },
+  { to: '/data/posts',           key: 'nav.posts',     Icon: FileImage },
 ];
 
 const NAV_ADMIN = [
@@ -58,18 +58,27 @@ function NavItem({ to, icon: Icon, label, collapsed }) {
 export function DashboardLayout() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Placeholder: System 1 will provide real user from AuthProvider
-  const user = null;
   const isAdmin = user?.role === 'super_admin';
   const navItems = isAdmin ? NAV_ADMIN : NAV_COMPANY;
-
   const isRtl = i18n.language === 'ar';
   const CollapseIcon = isRtl
     ? collapsed ? ChevronLeft : ChevronRight
     : collapsed ? ChevronRight : ChevronLeft;
+
+  async function handleLogout() {
+    await logout();
+    navigate('/login', { replace: true });
+    toast.success('Logged out');
+  }
+
+  // User avatar initials
+  const initials = user?.fullName
+    ? user.fullName.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+    : '?';
 
   const sidebar = (
     <aside
@@ -96,14 +105,14 @@ export function DashboardLayout() {
         ))}
       </nav>
 
-      {/* Bottom: profile, settings, collapse */}
+      {/* Bottom */}
       <div className="p-2 space-y-0.5 border-t border-slate-800">
         <NavItem to="/profile" icon={User} label={t('nav.profile')} collapsed={collapsed} />
         {!isAdmin && (
           <NavItem to="/company/settings" icon={Settings} label={t('nav.settings')} collapsed={collapsed} />
         )}
         <button
-          onClick={() => {/* System 1: logout */}}
+          onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-red-400 transition-colors"
           title={collapsed ? t('nav.logout') : undefined}
         >
@@ -149,10 +158,17 @@ export function DashboardLayout() {
           <div className="flex-1" />
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            {/* System 1 will add user menu here */}
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">
-              ?
-            </div>
+            {/* User avatar */}
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm hover:ring-2 hover:ring-blue-400 transition-all"
+              title={user?.fullName}
+              aria-label="Profile"
+            >
+              {user?.avatarUrl
+                ? <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full rounded-full object-cover" />
+                : initials}
+            </button>
           </div>
         </header>
 

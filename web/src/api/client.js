@@ -1,6 +1,5 @@
 // src/api/client.js
-// Axios instance with base URL and interceptor placeholders.
-// The 401 interceptor (silent refresh) is completed in System 1.
+// Axios instance with base URL, access token injection, and 401 silent-refresh + retry.
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -9,9 +8,8 @@ const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// ── Request interceptor: attach access token from memory (set by AuthProvider in System 1)
+// ── Request interceptor: attach access token from memory ──────────────────────
 apiClient.interceptors.request.use((config) => {
-  // AuthProvider will register this via setAccessTokenGetter()
   const token = typeof window.__getAccessToken === 'function'
     ? window.__getAccessToken()
     : null;
@@ -21,10 +19,67 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// ── Response interceptor placeholder (completed in System 1 with silent refresh + retry)
+// ── Response interceptor: 401 → silent refresh → retry once ──────────────────
+let isRefreshing = false;
+let refreshQueue = [];                 // pending requests during refresh
+
+function processQueue(error, token = null) {
+  refreshQueue.forEach((cb) => {
+    if (error) cb.reject(error);
+    else cb.resolve(token);
+  });
+  refreshQueue = [];
+}
+
 apiClient.interceptors.response.use(
   (res) => res,
-  (err) => Promise.reject(err)
+  async (err) => {
+    const original = err.config;
+
+    // Only intercept 401s, skip refresh endpoint itself to avoid loops
+    if (
+      err.response?.status === 401 &&
+      !original._retried &&
+      !original.url?.includes('/auth/refresh') &&
+      !original.url?.includes('/auth/login')
+    ) {
+      if (isRefreshing) {
+        // Queue the request until refresh completes
+        return new Promise((resolve, reject) => {
+          refreshQueue.push({ resolve, reject });
+        }).then((token) => {
+          original.headers.Authorization = `Bearer ${token}`;
+          return apiClient(original);
+        });
+      }
+
+      original._retried = true;
+      isRefreshing = true;
+
+      try {
+        const { data } = await apiClient.post('/auth/refresh');
+        const newToken = data.data.accessToken;
+
+        // Update the in-memory token via the registered setter
+        if (typeof window.__setAccessToken === 'function') {
+          window.__setAccessToken(newToken);
+        }
+
+        processQueue(null, newToken);
+        original.headers.Authorization = `Bearer ${newToken}`;
+        return apiClient(original);
+      } catch (refreshErr) {
+        processQueue(refreshErr, null);
+        // Dispatch a custom event so AuthProvider can clear user state
+        window.dispatchEvent(new Event('auth:session-expired'));
+        return Promise.reject(refreshErr);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(err);
+  }
 );
 
 export default apiClient;

@@ -17,6 +17,7 @@ import { logger } from './utils/logger.js';
 
 // Routes
 import healthRouter from './modules/health/health.routes.js';
+import authRouter from './modules/auth/auth.routes.js';
 
 const app = express();
 
@@ -44,7 +45,6 @@ app.use(cookieParser());
 app.use(
   pinoHttp({
     logger,
-    // Never log Authorization or Cookie headers
     customLogLevel: (req, res, err) => {
       if (err || res.statusCode >= 500) return 'error';
       if (res.statusCode >= 400) return 'warn';
@@ -59,6 +59,7 @@ app.use(general);
 
 // ── Routers under /api
 app.use('/api', healthRouter);
+app.use('/api/auth', authRouter);
 
 // ── 404 for unmatched routes
 app.use(notFound);

@@ -3,12 +3,15 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: 'node',
     globals: true,
-    include: ['tests/**/*.test.js', 'src/**/*.test.js'],
-    coverage: {
-      reporter: ['text', 'html'],
-      exclude: ['node_modules/', 'prisma/'],
+    environment: 'node',
+    testTimeout: 30000,
+    hookTimeout: 30000,
+    include: ['tests/**/*.test.js'],
+    setupFiles: ['tests/setup.js'],
+    pool: 'forks',
+    env: {
+      NODE_ENV: 'test',
     },
   },
 });

@@ -1,6 +1,6 @@
 // prisma/schema.prisma
-// System 0 - Foundation: Prisma initialized, no business tables yet.
-// Tables are added by later system migrations.
+// System 0: init — no models
+// System 1: companies, users, refresh_tokens
 
 generator client {
   provider = "prisma-client-js"
@@ -9,4 +9,146 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+enum Role {
+  super_admin
+  company_admin
+  analyst
+  viewer
+}
+
+enum CompanyStatus {
+  active
+  inactive
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
+}
+
+enum SourceType {
+  public_manual
+  csv_import
+  official_api
+  synthetic_demo
+}
+
+enum Platform {
+  instagram
+  facebook
+  tiktok
+  other
+}
+
+enum ContentType {
+  image
+  video
+  reel
+  carousel
+  story
+  text
+  other
+}
+
+enum ImportType {
+  social_posts
+  regional_metrics
+  sales_records
+}
+
+enum ImportStatus {
+  previewed
+  processing
+  completed
+  completed_with_errors
+  failed
+  cancelled
+}
+
+enum MetricType {
+  impressions
+  clicks
+  conversions
+  spend
+  orders
+  revenue
+  followers
+  profit_margin
+}
+
+enum ReportType {
+  geo
+  growth
+  scheduler
+  forecast
+  combined
+}
+
+// ── System 1 Tables ───────────────────────────────────────────────────────────
+
+model Company {
+  id                  String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                String        @db.VarChar(150)
+  registrationNumber  String?       @unique @db.VarChar(50) @map("registration_number")
+  industry            String?       @db.VarChar(100)
+  email               String?       @db.VarChar(255)
+  phone               String?       @db.VarChar(30)
+  address             String?
+  logoUrl             String?       @map("logo_url")
+  logoPublicId        String?       @map("logo_public_id")
+  status              CompanyStatus @default(active)
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  users               User[]
+
+  @@map("companies")
+}
+
+model User {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId         String?   @map("company_id") @db.Uuid
+  fullName          String    @db.VarChar(120) @map("full_name")
+  email             String    @db.VarChar(255)
+  passwordHash      String    @map("password_hash")
+  role              Role
+  isActive          Boolean   @default(true) @map("is_active")
+  avatarUrl         String?   @map("avatar_url")
+  avatarPublicId    String?   @map("avatar_public_id")
+  preferredLanguage String    @default("ar") @db.VarChar(2) @map("preferred_language")
+  failedLoginCount  Int       @default(0) @map("failed_login_count")
+  lockedUntil       DateTime? @map("locked_until") @db.Timestamptz
+  lastLoginAt       DateTime? @map("last_login_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  company           Company?      @relation(fields: [companyId], references: [id])
+  refreshTokens     RefreshToken[]
+
+  @@index([companyId])
+  @@map("users")
+}
+
+model RefreshToken {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  tokenHash   String    @db.Char(64) @map("token_hash")
+  familyId    String    @map("family_id") @db.Uuid
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz
+  replacedBy  String?   @map("replaced_by") @db.Uuid
+  userAgent   String?   @map("user_agent")
+  ip          String?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
 }

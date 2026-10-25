@@ -1,13 +1,15 @@
 // prisma/seed.js
-// Entry point for seeding — each system registers its seed here.
-// System 1 will add ensureSuperAdmin().
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
+import { ensureSuperAdmin } from '../src/modules/auth/auth.service.js';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding database...');
-  // System 1 will add: await ensureSuperAdmin(prisma);
+  await ensureSuperAdmin();
+  // System 3 will add: await seedSystemSettings(prisma);
+  // System 4 will add: await seedWilayas(prisma);
   console.log('✅ Seed complete');
 }
 
