@@ -24,6 +24,12 @@ beforeAll(async () => {
   adminUser    = await createTestUser({ email: `test_admin_${Date.now()}@x.com`,    role: 'company_admin', companyId: company.id,  password: PASSWORD });
   superUser    = await createTestUser({ email: `test_super_${Date.now()}@x.com`,    role: 'super_admin',   companyId: null,         password: PASSWORD });
   inactiveUser = await createTestUser({ email: `test_inactive_${Date.now()}@x.com`, role: 'analyst',       companyId: company.id,  password: PASSWORD, isActive: false });
+
+  // Reset any stale lockouts from previous runs
+  await testPrisma.user.updateMany({
+    where: { email: { contains: 'test_' } },
+    data: { failedLoginCount: 0, lockedUntil: null },
+  });
 });
 
 afterAll(async () => {
@@ -112,8 +118,9 @@ describe('Account lockout', () => {
       .send({ email: lockUser.email, password: PASSWORD }); // correct password, still locked
     expect(res.status).toBe(401);
 
-    // Clean up
-    await testPrisma.user.delete({ where: { id: lockUser.id } });
+    // Clean up — deleteMany won't throw if already deleted
+    await testPrisma.refreshToken.deleteMany({ where: { userId: lockUser.id } });
+    await testPrisma.user.deleteMany({ where: { id: lockUser.id } });
   });
 });
 

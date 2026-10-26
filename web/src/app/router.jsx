@@ -6,22 +6,29 @@ import { ProtectedRoute } from '../features/auth/ProtectedRoute.jsx';
 import { RoleGuard } from '../features/auth/RoleGuard.jsx';
 import { NotFound } from '../pages/NotFound.jsx';
 import { Forbidden } from '../pages/Forbidden.jsx';
+import { LandingPage } from '../pages/LandingPage.jsx';
 import { LoginPage } from '../pages/LoginPage.jsx';
+import { RegisterPage } from '../pages/RegisterPage.jsx';
+import { RegisterSuccessPage } from '../pages/RegisterSuccessPage.jsx';
 import { ProfilePage } from '../pages/ProfilePage.jsx';
 import { HubPlaceholder } from '../pages/HubPlaceholder.jsx';
+import { AdminRequestsPage } from '../pages/admin/AdminRequestsPage.jsx';
+import { AdminCompaniesPage } from '../pages/admin/AdminCompaniesPage.jsx';
+import { CompanySettingsPage } from '../pages/company/CompanySettingsPage.jsx';
 
-const SUPER    = ['super_admin'];
-const COMPANY  = ['company_admin', 'analyst', 'viewer'];
-const ALL      = [...SUPER, ...COMPANY];
+const SUPER   = ['super_admin'];
+const COMPANY = ['company_admin', 'analyst', 'viewer'];
+const ALL     = [...SUPER, ...COMPANY];
 
 export const router = createBrowserRouter([
   // ── Public routes ──────────────────────────────────────────────────────────
   {
     element: <PublicLayout />,
     children: [
-      { path: '/',      element: <Navigate to="/login" replace /> },
-      { path: '/login', element: <LoginPage /> },
-      // System 2: register, request-access
+      { path: '/',                 element: <LandingPage /> },
+      { path: '/login',            element: <LoginPage /> },
+      { path: '/register',         element: <RegisterPage /> },
+      { path: '/register/success', element: <RegisterSuccessPage /> },
     ],
   },
 
@@ -41,22 +48,19 @@ export const router = createBrowserRouter([
           { path: '/reports',              element: <RoleGuard roles={ALL}><HubPlaceholder /></RoleGuard> },
           { path: '/data/imports',         element: <RoleGuard roles={COMPANY}><HubPlaceholder /></RoleGuard> },
           { path: '/data/posts',           element: <RoleGuard roles={COMPANY}><HubPlaceholder /></RoleGuard> },
-          { path: '/company/settings',     element: <RoleGuard roles={['company_admin']}><HubPlaceholder /></RoleGuard> },
+          { path: '/company/settings',     element: <RoleGuard roles={['company_admin']}><CompanySettingsPage /></RoleGuard> },
 
-          // Profile (all authenticated users)
+          // Profile (all authenticated)
           { path: '/profile', element: <ProfilePage /> },
 
           // Super admin routes
           { path: '/admin/dashboard',  element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
-          { path: '/admin/companies',  element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
-          { path: '/admin/requests',   element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
+          { path: '/admin/companies',  element: <RoleGuard roles={SUPER}><AdminCompaniesPage /></RoleGuard> },
+          { path: '/admin/requests',   element: <RoleGuard roles={SUPER}><AdminRequestsPage /></RoleGuard> },
           { path: '/admin/users',      element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
           { path: '/admin/logs',       element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
           { path: '/admin/settings',   element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
           { path: '/admin/demo-data',  element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
-
-          // Default redirect
-          { path: '/',  element: <Navigate to="/hub" replace /> },
         ],
       },
     ],

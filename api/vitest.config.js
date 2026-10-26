@@ -10,8 +10,8 @@ export default defineConfig({
     include: ['tests/**/*.test.js'],
     setupFiles: ['tests/setup.js'],
     pool: 'forks',
-    env: {
-      NODE_ENV: 'test',
-    },
+    // Run test files one at a time to avoid cross-file teardown races on shared DB
+    fileParallelism: false,
+    env: { NODE_ENV: 'test' },
   },
 });

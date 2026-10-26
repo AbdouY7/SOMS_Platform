@@ -57,6 +57,8 @@ export function expectCrossCompany404(agent, url, method = 'get') {
  */
 export async function cleanTestDb() {
   await testPrisma.refreshToken.deleteMany();
+  await testPrisma.administrativeRequest.deleteMany({ where: { applicantEmail: { contains: '@' } } });
+  // Delete users before companies (FK + CHECK constraint requires company_id for non-super_admin)
   await testPrisma.user.deleteMany({ where: { email: { contains: 'test_' } } });
   await testPrisma.company.deleteMany({ where: { name: { startsWith: 'Test ' } } });
 }

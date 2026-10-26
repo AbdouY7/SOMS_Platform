@@ -18,6 +18,8 @@ import { logger } from './utils/logger.js';
 // Routes
 import healthRouter from './modules/health/health.routes.js';
 import authRouter from './modules/auth/auth.routes.js';
+import { publicRequestsRouter, adminRequestsRouter } from './modules/requests/requests.routes.js';
+import { adminRouter as companiesAdminRouter, companyRouter } from './modules/company/company.routes.js';
 
 const app = express();
 
@@ -60,6 +62,10 @@ app.use(general);
 // ── Routers under /api
 app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/public/company-requests', publicRequestsRouter);
+app.use('/api/admin/requests', adminRequestsRouter);
+app.use('/api/admin/companies', companiesAdminRouter);
+app.use('/api/company', companyRouter);
 
 // ── 404 for unmatched routes
 app.use(notFound);

@@ -106,6 +106,7 @@ model Company {
   updatedAt           DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
   users               User[]
+  administrativeRequests AdministrativeRequest[]
 
   @@map("companies")
 }
@@ -127,8 +128,9 @@ model User {
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
-  company           Company?      @relation(fields: [companyId], references: [id])
-  refreshTokens     RefreshToken[]
+  company              Company?               @relation(fields: [companyId], references: [id])
+  refreshTokens        RefreshToken[]
+  reviewedRequests     AdministrativeRequest[] @relation("RequestReviewer")
 
   @@index([companyId])
   @@map("users")
@@ -152,3 +154,28 @@ model RefreshToken {
   @@index([tokenHash])
   @@map("refresh_tokens")
 }
+
+// ── System 2 Tables ───────────────────────────────────────────────────────────
+
+model AdministrativeRequest {
+  id                  String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyName         String        @db.VarChar(150) @map("company_name")
+  registrationNumber  String?       @db.VarChar(50) @map("registration_number")
+  industry            String?       @db.VarChar(100)
+  contactPhone        String?       @db.VarChar(30) @map("contact_phone")
+  applicantFullName   String        @db.VarChar(120) @map("applicant_full_name")
+  applicantEmail      String        @db.VarChar(255) @map("applicant_email")
+  passwordHash        String?       @map("password_hash")
+  status              RequestStatus @default(pending)
+  reviewedBy          String?       @map("reviewed_by") @db.Uuid
+  reviewedAt          DateTime?     @map("reviewed_at") @db.Timestamptz
+  decisionNote        String?       @map("decision_note")
+  createdCompanyId    String?       @map("created_company_id") @db.Uuid
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  reviewer            User?         @relation("RequestReviewer", fields: [reviewedBy], references: [id])
+  createdCompany      Company?      @relation(fields: [createdCompanyId], references: [id])
+
+  @@map("administrative_requests")
+}
+
