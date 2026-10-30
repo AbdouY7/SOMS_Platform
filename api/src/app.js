@@ -20,6 +20,10 @@ import healthRouter from './modules/health/health.routes.js';
 import authRouter from './modules/auth/auth.routes.js';
 import { publicRequestsRouter, adminRequestsRouter } from './modules/requests/requests.routes.js';
 import { adminRouter as companiesAdminRouter, companyRouter } from './modules/company/company.routes.js';
+import { adminUsersRouter, companyUsersRouter } from './modules/users/users.routes.js';
+import { adminLogsRouter, companyLogsRouter } from './modules/logs/logs.routes.js';
+import { adminSettingsRouter, publicSettingsRouter } from './modules/settings/settings.routes.js';
+import dashboardRouter from './modules/admin/dashboard.routes.js';
 
 const app = express();
 
@@ -63,9 +67,16 @@ app.use(general);
 app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/public/company-requests', publicRequestsRouter);
-app.use('/api/admin/requests', adminRequestsRouter);
-app.use('/api/admin/companies', companiesAdminRouter);
-app.use('/api/company', companyRouter);
+app.use('/api/admin/requests',           adminRequestsRouter);
+app.use('/api/admin/companies',          companiesAdminRouter);
+app.use('/api/admin/users',              adminUsersRouter);
+app.use('/api/admin/activity-logs',      adminLogsRouter);
+app.use('/api/admin/settings',           adminSettingsRouter);
+app.use('/api/admin/dashboard',          dashboardRouter);
+app.use('/api/settings',                 publicSettingsRouter);
+app.use('/api/company',                  companyRouter);
+app.use('/api/company/users',            companyUsersRouter);
+app.use('/api/company/activity-logs',    companyLogsRouter);
 
 // ── 404 for unmatched routes
 app.use(notFound);

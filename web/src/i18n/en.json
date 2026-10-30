@@ -158,5 +158,60 @@
       "message": "You are not authorized to access this page",
       "back": "Go back"
     }
+  },
+  "users": {
+    "title": "Users",
+    "create": "Create user",
+    "edit": "Edit user",
+    "created": "User created",
+    "updated": "User updated",
+    "empty": "No users found",
+    "role": "Role",
+    "resetPassword": "Reset password",
+    "tempPassword": "Temporary password",
+    "tempPasswordNote": "Share this password securely — it won't be shown again.",
+    "copyPassword": "Copy",
+    "activateTitle": "Activate user",
+    "activateMessage": "This user will regain access.",
+    "deactivateTitle": "Deactivate user",
+    "deactivateWarning": "This will immediately log out the user.",
+    "cannotDeactivateSelf": "You cannot deactivate your own account",
+    "cannotRemoveLastAdmin": "Cannot remove the last active company admin"
+  },
+  "logs": {
+    "title": "Activity Log",
+    "action": "Action",
+    "actor": "Actor",
+    "entity": "Entity",
+    "metadata": "Details",
+    "noLogs": "No activity recorded"
+  },
+  "settings": {
+    "title": "System Settings",
+    "general": "General",
+    "thresholds": "Thresholds",
+    "weights": "Opportunity Weights",
+    "weightSum": "Total: {{sum}}/100",
+    "weightError": "Weights must sum to exactly 100",
+    "defaultLanguage": "Default language",
+    "allowRegistration": "Allow public registration",
+    "importMaxFileMb": "Import max file size (MB)",
+    "importMaxRows": "Import max rows",
+    "schedulerMinPostsPerSlot": "Min posts per time slot",
+    "schedulerMinTotalPosts": "Min total posts",
+    "growthMinPeriods": "Min data periods for growth",
+    "saved": "Setting saved"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "activeCompanies": "Active Companies",
+    "pendingRequests": "Pending Requests",
+    "totalUsers": "Total Users",
+    "activeUsers": "Active Users",
+    "recentActivity": "Recent Activity",
+    "pendingWidget": "Pending Requests",
+    "viewAll": "View all",
+    "noActivity": "No recent activity"
   }
 }
+

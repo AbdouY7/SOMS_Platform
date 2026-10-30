@@ -1,6 +1,8 @@
 // prisma/schema.prisma
 // System 0: init — no models
 // System 1: companies, users, refresh_tokens
+// System 2: administrative_requests
+// System 3: activity_logs, system_settings
 
 generator client {
   provider = "prisma-client-js"
@@ -105,8 +107,9 @@ model Company {
   createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt           DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 
-  users               User[]
+  users                  User[]
   administrativeRequests AdministrativeRequest[]
+  activityLogs           ActivityLog[]
 
   @@map("companies")
 }
@@ -131,6 +134,8 @@ model User {
   company              Company?               @relation(fields: [companyId], references: [id])
   refreshTokens        RefreshToken[]
   reviewedRequests     AdministrativeRequest[] @relation("RequestReviewer")
+  activityLogs         ActivityLog[]
+  updatedSettings      SystemSetting[]
 
   @@index([companyId])
   @@map("users")
@@ -179,3 +184,34 @@ model AdministrativeRequest {
   @@map("administrative_requests")
 }
 
+// ── System 3 Tables ───────────────────────────────────────────────────────────
+
+model ActivityLog {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  companyId   String?  @map("company_id") @db.Uuid
+  action      String   @db.VarChar(60)
+  entityType  String?  @map("entity_type") @db.VarChar(60)
+  entityId    String?  @map("entity_id") @db.Uuid
+  metadata    Json?
+  ip          String?  @db.VarChar(45)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  actor   User?    @relation(fields: [actorUserId], references: [id])
+  company Company? @relation(fields: [companyId], references: [id])
+
+  @@index([companyId, createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@map("activity_logs")
+}
+
+model SystemSetting {
+  key       String   @id @db.VarChar(80)
+  value     Json
+  updatedBy String?  @map("updated_by") @db.Uuid
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  updater User? @relation(fields: [updatedBy], references: [id])
+
+  @@map("system_settings")
+}
