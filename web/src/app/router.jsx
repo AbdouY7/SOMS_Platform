@@ -23,6 +23,12 @@ import { AdminLogsPage } from '../pages/admin/AdminLogsPage.jsx';
 import { AdminSettingsPage } from '../pages/admin/AdminSettingsPage.jsx';
 import { CompanyUsersPage } from '../pages/company/CompanyUsersPage.jsx';
 import { CompanyActivityPage } from '../pages/company/CompanyActivityPage.jsx';
+// System 4
+import ImportsPage       from '../pages/data/ImportsPage.jsx';
+import ImportWizardPage  from '../pages/data/ImportWizardPage.jsx';
+import ImportDetailPage  from '../pages/data/ImportDetailPage.jsx';
+import PostsPage         from '../pages/data/PostsPage.jsx';
+import AdminDemoDataPage from '../pages/admin/AdminDemoDataPage.jsx';
 
 const SUPER   = ['super_admin'];
 const COMPANY = ['company_admin', 'analyst', 'viewer'];
@@ -54,8 +60,10 @@ export const router = createBrowserRouter([
           { path: '/analytics/scheduler',  element: <RoleGuard roles={ALL}><HubPlaceholder /></RoleGuard> },
           { path: '/forecast',             element: <RoleGuard roles={ALL}><HubPlaceholder /></RoleGuard> },
           { path: '/reports',              element: <RoleGuard roles={ALL}><HubPlaceholder /></RoleGuard> },
-          { path: '/data/imports',         element: <RoleGuard roles={COMPANY}><HubPlaceholder /></RoleGuard> },
-          { path: '/data/posts',           element: <RoleGuard roles={COMPANY}><HubPlaceholder /></RoleGuard> },
+          { path: '/data/imports',         element: <RoleGuard roles={COMPANY}><ImportsPage /></RoleGuard> },
+          { path: '/data/imports/new',      element: <RoleGuard roles={COMPANY}><ImportWizardPage /></RoleGuard> },
+          { path: '/data/imports/:id',      element: <RoleGuard roles={COMPANY}><ImportDetailPage /></RoleGuard> },
+          { path: '/data/posts',            element: <RoleGuard roles={COMPANY}><PostsPage /></RoleGuard> },
           // Company management (System 2 & 3)
           { path: '/company/settings',     element: <RoleGuard roles={['company_admin']}><CompanySettingsPage /></RoleGuard> },
           { path: '/company/users',        element: <RoleGuard roles={['company_admin']}><CompanyUsersPage /></RoleGuard> },
@@ -69,7 +77,7 @@ export const router = createBrowserRouter([
           { path: '/admin/users',          element: <RoleGuard roles={SUPER}><AdminUsersPage /></RoleGuard> },
           { path: '/admin/logs',           element: <RoleGuard roles={SUPER}><AdminLogsPage /></RoleGuard> },
           { path: '/admin/settings',       element: <RoleGuard roles={SUPER}><AdminSettingsPage /></RoleGuard> },
-          { path: '/admin/demo-data',      element: <RoleGuard roles={SUPER}><HubPlaceholder /></RoleGuard> },
+          { path: '/admin/demo-data',      element: <RoleGuard roles={SUPER}><AdminDemoDataPage /></RoleGuard> },
         ],
       },
     ],

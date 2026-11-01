@@ -212,6 +212,77 @@
     "pendingWidget": "Pending Requests",
     "viewAll": "View all",
     "noActivity": "No recent activity"
+  },
+  "imports": {
+    "title": "Data Imports",
+    "new": "New Import",
+    "type": "Import type",
+    "status": "Status",
+    "mode": "Import mode",
+    "onError": "On error",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "total": "Total rows",
+    "preview": "Preview",
+    "commit": "Commit import",
+    "rollback": "Rollback",
+    "rollbackWarning": "This will delete all rows created by this import. This cannot be undone.",
+    "downloadErrors": "Download error report",
+    "empty": "No imports yet",
+    "step1": "Choose type",
+    "step2": "Upload file",
+    "step3": "Preview",
+    "step4": "Options",
+    "step5": "Confirm",
+    "step6": "Result",
+    "modeAppend": "Append (skip duplicates)",
+    "modeUpsert": "Upsert (overwrite duplicates)",
+    "onErrorSkip": "Skip invalid rows",
+    "onErrorAbort": "Abort on first error",
+    "dropzoneHint": "Drag & drop a CSV file here, or click to browse",
+    "invalidCells": "{{n}} invalid rows highlighted",
+    "noErrors": "All rows are valid",
+    "confirmMessage": "{{accepted}} rows will be imported. {{rejected}} rows will be skipped.",
+    "types": {
+      "social_posts": "Social posts",
+      "regional_metrics": "Regional metrics",
+      "sales_records": "Sales records"
+    },
+    "statuses": {
+      "previewed": "Previewed",
+      "processing": "Processing",
+      "completed": "Completed",
+      "completed_with_errors": "Completed with errors",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "posts": {
+    "title": "Public Posts",
+    "add": "Add post",
+    "edit": "Edit post",
+    "platform": "Platform",
+    "publishedAt": "Published at",
+    "contentType": "Content type",
+    "metrics": "Engagement metrics",
+    "empty": "No posts yet",
+    "manualHint": "Add public post metrics here (likes, views, etc.) for posts you published manually.",
+    "externalId": "Post ID (optional)",
+    "caption": "Public caption (optional)"
+  },
+  "demo": {
+    "hint": "Add 12 months of synthetic data (all wilayas, 2 platforms) for a company to try the analytics.",
+    "seed": "Seed demo data",
+    "purge": "Purge demo data",
+    "seedTitle": "Seed demo data?",
+    "purgeTitle": "Purge demo data?",
+    "seedMessage": "This adds synthetic data to {{name}}. If demo data already exists, nothing is added.",
+    "purgeMessage": "This deletes all demo rows for {{name}}. Imported and manual data stays.",
+    "seeded": "Demo data added to {{name}}: {{n}} metrics, {{p}} posts, {{s}} sales",
+    "purged": "Demo data removed from {{name}}: {{n}} rows deleted",
+    "alreadySeeded": "{{name}} already has demo data",
+    "noCompanies": "No active companies",
+    "noCompaniesHint": "Approve a company request first."
   }
 }
 

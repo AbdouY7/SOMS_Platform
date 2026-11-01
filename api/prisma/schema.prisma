@@ -3,6 +3,7 @@
 // System 1: companies, users, refresh_tokens
 // System 2: administrative_requests
 // System 3: activity_logs, system_settings
+// System 4: wilayas, data_imports, data_import_errors, social_posts, regional_metrics, sales_records
 
 generator client {
   provider = "prisma-client-js"
@@ -110,6 +111,11 @@ model Company {
   users                  User[]
   administrativeRequests AdministrativeRequest[]
   activityLogs           ActivityLog[]
+  // System 4
+  dataImports            DataImport[]
+  socialPosts            SocialPost[]
+  regionalMetrics        RegionalMetric[]
+  salesRecords           SalesRecord[]
 
   @@map("companies")
 }
@@ -136,6 +142,8 @@ model User {
   reviewedRequests     AdministrativeRequest[] @relation("RequestReviewer")
   activityLogs         ActivityLog[]
   updatedSettings      SystemSetting[]
+  // System 4
+  dataImports          DataImport[]           @relation("ImportedBy")
 
   @@index([companyId])
   @@map("users")
@@ -214,4 +222,129 @@ model SystemSetting {
   updater User? @relation(fields: [updatedBy], references: [id])
 
   @@map("system_settings")
+}
+
+// ── System 4 Tables ───────────────────────────────────────────────────────────
+
+model Wilaya {
+  code     String  @id @db.Char(2)
+  nameAr   String  @db.VarChar(80) @map("name_ar")
+  nameFr   String  @db.VarChar(80) @map("name_fr")
+  nameEn   String  @db.VarChar(80) @map("name_en")
+  aliases  String[]
+  isActive Boolean @default(true) @map("is_active")
+
+  regionalMetrics RegionalMetric[]
+  salesRecords    SalesRecord[]
+
+  @@map("wilayas")
+}
+
+model DataImport {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId    String       @map("company_id") @db.Uuid
+  importType   ImportType   @map("import_type")
+  sourceType   SourceType   @default(csv_import) @map("source_type")
+  fileName     String?      @db.VarChar(255) @map("file_name")
+  mode         String       @db.VarChar(10)
+  onError      String       @db.VarChar(15) @map("on_error")
+  status       ImportStatus @default(previewed)
+  totalRows    Int          @default(0) @map("total_rows")
+  acceptedRows Int          @default(0) @map("accepted_rows")
+  rejectedRows Int          @default(0) @map("rejected_rows")
+  errorSummary Json?        @map("error_summary")
+  importedBy   String?      @map("imported_by") @db.Uuid
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  completedAt  DateTime?    @map("completed_at") @db.Timestamptz
+
+  company         Company          @relation(fields: [companyId], references: [id])
+  importer        User?            @relation("ImportedBy", fields: [importedBy], references: [id])
+  errors          DataImportError[]
+  socialPosts     SocialPost[]
+  regionalMetrics RegionalMetric[]
+  salesRecords    SalesRecord[]
+
+  @@index([companyId, createdAt(sort: Desc)])
+  @@map("data_imports")
+}
+
+model DataImportError {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  importId   String  @map("import_id") @db.Uuid
+  rowNumber  Int     @map("row_number")
+  columnName String? @db.VarChar(100) @map("column_name")
+  errorCode  String  @db.VarChar(50) @map("error_code")
+  message    String
+  rawRow     Json?   @map("raw_row")
+
+  import DataImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+
+  @@index([importId])
+  @@map("data_import_errors")
+}
+
+model SocialPost {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId      String       @map("company_id") @db.Uuid
+  platform       Platform
+  externalPostId String?      @db.VarChar(100) @map("external_post_id")
+  publishedAt    DateTime     @map("published_at") @db.Timestamptz
+  contentType    ContentType? @map("content_type")
+  captionPublic  String?      @map("caption_public")
+  likes          Int?
+  comments       Int?
+  shares         Int?
+  views          Int?
+  reach          Int?
+  impressions    Int?
+  clicks         Int?
+  sourceType     SourceType   @map("source_type")
+  importId       String?      @db.Uuid @map("import_id")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+
+  company Company     @relation(fields: [companyId], references: [id])
+  import  DataImport? @relation(fields: [importId], references: [id])
+
+  @@index([companyId, platform, publishedAt(sort: Desc)])
+  @@map("social_posts")
+}
+
+model RegionalMetric {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId   String     @map("company_id") @db.Uuid
+  wilayaCode  String     @map("wilaya_code") @db.Char(2)
+  periodStart DateTime   @map("period_start") @db.Date
+  periodEnd   DateTime   @map("period_end") @db.Date
+  metricType  MetricType @map("metric_type")
+  metricValue Decimal    @map("metric_value") @db.Decimal(18, 4)
+  sourceType  SourceType @map("source_type")
+  importId    String?    @db.Uuid @map("import_id")
+
+  company Company     @relation(fields: [companyId], references: [id])
+  wilaya  Wilaya      @relation(fields: [wilayaCode], references: [code])
+  import  DataImport? @relation(fields: [importId], references: [id])
+
+  @@unique([companyId, wilayaCode, periodStart, periodEnd, metricType, sourceType])
+  @@index([companyId, periodStart, periodEnd])
+  @@map("regional_metrics")
+}
+
+model SalesRecord {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String    @map("company_id") @db.Uuid
+  orderDate       DateTime  @map("order_date") @db.Date
+  wilayaCode      String?   @map("wilaya_code") @db.Char(2)
+  productCategory String?   @db.VarChar(100) @map("product_category")
+  orderCount      Int       @map("order_count")
+  revenue         Decimal   @db.Decimal(14, 2)
+  acquisitionCost Decimal?  @map("acquisition_cost") @db.Decimal(14, 2)
+  sourceType      SourceType @map("source_type")
+  importId        String?   @db.Uuid @map("import_id")
+
+  company Company     @relation(fields: [companyId], references: [id])
+  wilaya  Wilaya?     @relation(fields: [wilayaCode], references: [code])
+  import  DataImport? @relation(fields: [importId], references: [id])
+
+  @@index([companyId, orderDate(sort: Desc)])
+  @@map("sales_records")
 }

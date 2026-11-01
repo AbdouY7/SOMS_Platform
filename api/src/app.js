@@ -24,6 +24,11 @@ import { adminUsersRouter, companyUsersRouter } from './modules/users/users.rout
 import { adminLogsRouter, companyLogsRouter } from './modules/logs/logs.routes.js';
 import { adminSettingsRouter, publicSettingsRouter } from './modules/settings/settings.routes.js';
 import dashboardRouter from './modules/admin/dashboard.routes.js';
+// System 4
+import { importsRouter } from './modules/imports/imports.routes.js';
+import { postsRouter }   from './modules/posts/posts.routes.js';
+import { wilayasRouter } from './modules/wilayas/wilayas.routes.js';
+import { demoRouter }    from './modules/demo/demo.routes.js';
 
 const app = express();
 
@@ -74,9 +79,14 @@ app.use('/api/admin/activity-logs',      adminLogsRouter);
 app.use('/api/admin/settings',           adminSettingsRouter);
 app.use('/api/admin/dashboard',          dashboardRouter);
 app.use('/api/settings',                 publicSettingsRouter);
-app.use('/api/company',                  companyRouter);
-app.use('/api/company/users',            companyUsersRouter);
-app.use('/api/company/activity-logs',    companyLogsRouter);
+app.use('/api/company',               companyRouter);
+app.use('/api/company/users',         companyUsersRouter);
+app.use('/api/company/activity-logs', companyLogsRouter);
+// System 4
+app.use('/api/imports',               importsRouter);
+app.use('/api/posts',                 postsRouter);
+app.use('/api/wilayas',               wilayasRouter);
+app.use('/api/admin/demo-data',       demoRouter);
 
 // ── 404 for unmatched routes
 app.use(notFound);

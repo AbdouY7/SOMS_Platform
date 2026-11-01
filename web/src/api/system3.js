@@ -27,6 +27,11 @@ export const adminLogsApi = {
   list: (params) => apiClient.get('/admin/activity-logs', { params }).then(r => r.data),
 };
 
+// ── Companies (used by AdminDemoDataPage) ──────────────────────────────────────
+export const companiesApi = {
+  list: () => apiClient.get('/admin/companies').then(r => r.data.data?.items ?? r.data.data ?? []),
+};
+
 // ── Shared error helper ───────────────────────────────────────────────────────
 export function getErrorMessage(err) {
   return err?.response?.data?.error?.message
