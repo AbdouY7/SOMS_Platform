@@ -23,7 +23,7 @@ function KpiCard({ label, value, Icon, tone }) {
   );
 }
 
-export default function AdminDashboardPage() {
+export function AdminDashboardPage() {
   const { t, i18n } = useTranslation();
 
   const { data, isLoading, isError, error } = useQuery({

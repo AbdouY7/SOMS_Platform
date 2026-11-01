@@ -158,5 +158,59 @@
       "message": "غير مصرح لك بالوصول إلى هذه الصفحة",
       "back": "العودة"
     }
+  },
+  "users": {
+    "title": "المستخدمون",
+    "create": "إنشاء مستخدم",
+    "edit": "تعديل المستخدم",
+    "created": "تم إنشاء المستخدم",
+    "updated": "تم تحديث المستخدم",
+    "empty": "لا يوجد مستخدمون",
+    "role": "الدور",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "tempPassword": "كلمة مرور مؤقتة",
+    "tempPasswordNote": "شارك كلمة المرور هذه بشكل آمن — لن تُعرض مرة أخرى.",
+    "copyPassword": "نسخ",
+    "activateTitle": "تفعيل المستخدم",
+    "activateMessage": "سيسترجع هذا المستخدم الوصول.",
+    "deactivateTitle": "تعطيل المستخدم",
+    "deactivateWarning": "سيتم تسجيل خروج المستخدم فوراً.",
+    "cannotDeactivateSelf": "لا يمكنك تعطيل حسابك الخاص",
+    "cannotRemoveLastAdmin": "لا يمكن إزالة آخر مسؤول نشط للشركة"
+  },
+  "logs": {
+    "title": "سجل النشاط",
+    "action": "الإجراء",
+    "actor": "المنفذ",
+    "entity": "الكيان",
+    "metadata": "التفاصيل",
+    "noLogs": "لا يوجد نشاط مسجل"
+  },
+  "settings": {
+    "title": "إعدادات النظام",
+    "general": "عام",
+    "thresholds": "الحدود",
+    "weights": "أوزان الفرص",
+    "weightSum": "المجموع: {{sum}}/100",
+    "weightError": "يجب أن تبلغ الأوزان 100 بالضبط",
+    "defaultLanguage": "اللغة الافتراضية",
+    "allowRegistration": "السماح بالتسجيل العام",
+    "importMaxFileMb": "الحد الأقصى لحجم ملف الاستيراد (ميغابايت)",
+    "importMaxRows": "الحد الأقصى لصفوف الاستيراد",
+    "schedulerMinPostsPerSlot": "الحد الأدنى للمنشورات لكل فترة",
+    "schedulerMinTotalPosts": "الحد الأدنى الإجمالي للمنشورات",
+    "growthMinPeriods": "الحد الأدنى لفترات النمو",
+    "saved": "تم حفظ الإعداد"
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "activeCompanies": "الشركات النشطة",
+    "pendingRequests": "الطلبات المعلقة",
+    "totalUsers": "إجمالي المستخدمين",
+    "activeUsers": "المستخدمون النشطون",
+    "recentActivity": "النشاط الأخير",
+    "pendingWidget": "الطلبات المعلقة",
+    "viewAll": "عرض الكل",
+    "noActivity": "لا يوجد نشاط حديث"
   }
 }

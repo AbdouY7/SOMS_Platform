@@ -158,5 +158,59 @@
       "message": "Vous n'êtes pas autorisé à accéder à cette page",
       "back": "Retour"
     }
+  },
+  "users": {
+    "title": "Utilisateurs",
+    "create": "Créer un utilisateur",
+    "edit": "Modifier l'utilisateur",
+    "created": "Utilisateur créé",
+    "updated": "Utilisateur mis à jour",
+    "empty": "Aucun utilisateur trouvé",
+    "role": "Rôle",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "tempPassword": "Mot de passe temporaire",
+    "tempPasswordNote": "Partagez ce mot de passe de façon sécurisée — il ne sera plus affiché.",
+    "copyPassword": "Copier",
+    "activateTitle": "Activer l'utilisateur",
+    "activateMessage": "Cet utilisateur retrouvera l'accès.",
+    "deactivateTitle": "Désactiver l'utilisateur",
+    "deactivateWarning": "L'utilisateur sera immédiatement déconnecté.",
+    "cannotDeactivateSelf": "Vous ne pouvez pas désactiver votre propre compte",
+    "cannotRemoveLastAdmin": "Impossible de supprimer le dernier administrateur actif"
+  },
+  "logs": {
+    "title": "Journal d'activité",
+    "action": "Action",
+    "actor": "Acteur",
+    "entity": "Entité",
+    "metadata": "Détails",
+    "noLogs": "Aucune activité enregistrée"
+  },
+  "settings": {
+    "title": "Paramètres système",
+    "general": "Général",
+    "thresholds": "Seuils",
+    "weights": "Pondérations des opportunités",
+    "weightSum": "Total : {{sum}}/100",
+    "weightError": "Les pondérations doivent totaliser exactement 100",
+    "defaultLanguage": "Langue par défaut",
+    "allowRegistration": "Autoriser l'inscription publique",
+    "importMaxFileMb": "Taille max du fichier d'import (Mo)",
+    "importMaxRows": "Nombre max de lignes d'import",
+    "schedulerMinPostsPerSlot": "Publications min par créneau",
+    "schedulerMinTotalPosts": "Total de publications min",
+    "growthMinPeriods": "Périodes min pour la croissance",
+    "saved": "Paramètre enregistré"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "activeCompanies": "Entreprises actives",
+    "pendingRequests": "Demandes en attente",
+    "totalUsers": "Total utilisateurs",
+    "activeUsers": "Utilisateurs actifs",
+    "recentActivity": "Activité récente",
+    "pendingWidget": "Demandes en attente",
+    "viewAll": "Voir tout",
+    "noActivity": "Aucune activité récente"
   }
 }

@@ -115,7 +115,7 @@ export async function create(data, actor, ip = null) {
   }
 
   const email = data.email.trim().toLowerCase();
-  const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+  const existing = await prisma.user.findFirst({ where: { email }, select: { id: true } });
   if (existing) throw new AppError('Email is already in use', 409, 'EMAIL_TAKEN');
 
   const passwordHash = await argon2.hash(data.password, { type: argon2.argon2id });

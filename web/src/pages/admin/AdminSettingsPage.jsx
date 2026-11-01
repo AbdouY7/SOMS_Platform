@@ -68,7 +68,7 @@ function NumberField({ label, value, min, max, onChange }) {
   );
 }
 
-export default function AdminSettingsPage() {
+export function AdminSettingsPage() {
   const { t } = useTranslation();
   const qc = useQueryClient();
 
