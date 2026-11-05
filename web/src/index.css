@@ -53,13 +53,12 @@
   font-family: var(--font-arabic);
 }
 
-/* ── Base reset ───────────────────────────────────────────── */
+/* Box model only. Do not zero margin/padding here: this file is
+   unlayered, so it would override Tailwind's p-* and m-* utilities. */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
