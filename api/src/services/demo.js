@@ -80,10 +80,10 @@ export async function seed(companyId, actorId) {
     const factor = trend(m.index) * season(m.start.getUTCMonth());
     for (const w of wilayas) {
       const size = WILAYA_WEIGHT[w.code] ?? 0.5 + rng() * 0.4;
-      const leads = Math.round(size * 120 * factor * (0.8 + rng() * 0.4));
-      const orders = Math.round(leads * (0.12 + rng() * 0.1));
+      const conversions = Math.round(size * 120 * factor * (0.8 + rng() * 0.4));
+      const orders = Math.round(conversions * (0.12 + rng() * 0.1));
       const revenue = Math.round(orders * (3500 + rng() * 2000));
-      for (const [metricType, metricValue] of [['leads', leads], ['orders', orders], ['revenue', revenue]]) {
+      for (const [metricType, metricValue] of [['conversions', conversions], ['orders', orders], ['revenue', revenue]]) {
         metrics.push({ ...base, wilayaCode: w.code, metricType, periodStart: m.start, periodEnd: m.end, metricValue });
       }
     }

@@ -60,6 +60,12 @@ export async function cleanTestDb() {
   // Activity logs reference users/companies — clear before them
   await testPrisma.activityLog.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
   await testPrisma.administrativeRequest.deleteMany({ where: { applicantEmail: { contains: '@' } } });
+  // System 4 tables
+  await testPrisma.dataImportError.deleteMany({ where: { import: { company: { name: { startsWith: 'Test ' } } } } });
+  await testPrisma.socialPost.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
+  await testPrisma.regionalMetric.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
+  await testPrisma.salesRecord.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
+  await testPrisma.dataImport.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
   // Delete users before companies (FK + CHECK constraint requires company_id for non-super_admin)
   await testPrisma.user.deleteMany({ where: { email: { contains: 'test_' } } });
   await testPrisma.company.deleteMany({ where: { name: { startsWith: 'Test ' } } });

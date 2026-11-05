@@ -12,13 +12,22 @@ import { wilayaNormalize } from './wilaya.js';
 
 export const IMPORT_TYPES = ['social_posts', 'regional_metrics', 'sales_records'];
 // Keep these in sync with the enums in your database / posts schema.
-export const PLATFORMS = ['facebook', 'instagram', 'tiktok', 'youtube', 'linkedin', 'x'];
-export const CONTENT_TYPES = ['image', 'video', 'carousel', 'text', 'story', 'reel'];
-export const METRIC_TYPES = ['leads', 'orders', 'revenue', 'engagement', 'demand'];
+export const PLATFORMS = ['instagram', 'facebook', 'tiktok', 'other'];
+export const CONTENT_TYPES = ['image', 'video', 'reel', 'carousel', 'story', 'text', 'other'];
+export const METRIC_TYPES = [
+  'impressions',
+  'clicks',
+  'conversions',
+  'spend',
+  'orders',
+  'revenue',
+  'followers',
+  'profit_margin',
+];
 
 export const REQUIRED_COLUMNS = {
   social_posts: ['platform', 'published_at'],
-  regional_metrics: ['wilaya', 'metric_type', 'period_start', 'period_end', 'value'],
+  regional_metrics: ['wilaya', 'metric_type', 'period_start', 'period_end'],
   sales_records: ['order_date', 'order_count', 'revenue'],
 };
 
@@ -108,14 +117,17 @@ const VALIDATORS = {
     const c = makeRowContext(raw);
     const value = {
       platform: c.enumValue('platform', PLATFORMS),
-      externalPostId: isBlank(raw.external_post_id) ? null : String(raw.external_post_id).trim().slice(0, 120),
+      externalPostId: isBlank(raw.external_post_id) ? null : String(raw.external_post_id).trim().slice(0, 100),
       publishedAt: c.date('published_at', { notFuture: true }),
       contentType: c.enumValue('content_type', CONTENT_TYPES, { required: false }),
-      likes: c.number('likes', { integer: true }),
-      comments: c.number('comments', { integer: true }),
-      shares: c.number('shares', { integer: true }),
-      views: c.number('views', { integer: true }),
-      clicks: c.number('clicks', { integer: true }),
+      captionPublic: isBlank(raw.caption_public) ? null : String(raw.caption_public).trim(),
+      likes: c.number('likes', { integer: true, fallback: null }),
+      comments: c.number('comments', { integer: true, fallback: null }),
+      shares: c.number('shares', { integer: true, fallback: null }),
+      views: c.number('views', { integer: true, fallback: null }),
+      reach: c.number('reach', { integer: true, fallback: null }),
+      impressions: c.number('impressions', { integer: true, fallback: null }),
+      clicks: c.number('clicks', { integer: true, fallback: null }),
     };
     return { value, errors: c.errors };
   },
@@ -132,22 +144,32 @@ const VALIDATORS = {
     if (periodStart && periodEnd && periodStart > periodEnd) {
       c.fail('period_end', 'DATE_RANGE', 'period_end must be on or after period_start');
     }
+    const valCol = raw.metric_value !== undefined ? 'metric_value' : 'value';
+    const metricValue = c.number(valCol, { required: true });
     const value = {
       wilayaCode,
       metricType: c.enumValue('metric_type', METRIC_TYPES),
       periodStart,
       periodEnd,
-      value: c.number('value', { required: true }),
+      metricValue,
     };
     return { value, errors: c.errors };
   },
 
   sales_records: async (raw) => {
     const c = makeRowContext(raw);
+    let wilayaCode = null;
+    if (!isBlank(raw.wilaya)) {
+      wilayaCode = await wilayaNormalize(raw.wilaya);
+      if (!wilayaCode) c.fail('wilaya', 'UNKNOWN_WILAYA', `"${String(raw.wilaya).trim()}" is not a recognised wilaya`);
+    }
     const value = {
       orderDate: c.date('order_date'),
+      wilayaCode,
+      productCategory: isBlank(raw.product_category) ? null : String(raw.product_category).trim().slice(0, 100),
       orderCount: c.number('order_count', { required: true, integer: true }),
       revenue: c.number('revenue', { required: true }),
+      acquisitionCost: c.number('acquisition_cost', { required: false, fallback: null }),
     };
     return { value, errors: c.errors };
   },
@@ -187,6 +209,9 @@ export async function csvValidate(buffer, type, { maxErrors = 50 } = {}) {
 
   const columns = records[0].map((h) => String(h).trim().toLowerCase().replace(/\s+/g, '_'));
   const missing = REQUIRED_COLUMNS[type].filter((col) => !columns.includes(col));
+  if (type === 'regional_metrics' && !columns.includes('metric_value') && !columns.includes('value')) {
+    missing.push('metric_value');
+  }
   if (missing.length) {
     throw new AppError(`Missing required column(s): ${missing.join(', ')}`, 400, 'MISSING_COLUMNS');
   }

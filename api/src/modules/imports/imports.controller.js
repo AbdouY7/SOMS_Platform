@@ -51,7 +51,7 @@ export const list = asyncHandler(async (req, res) => {
 
 export const preview = asyncHandler(async (req, res) => {
   const { body } = parseRequest(previewSchema, req);
-  ok(res, await importsService.preview(req.file, body.type, body.mode, body.onError, req.user.id, companyOf(req)), 201);
+  ok(res, await importsService.preview(req.file, body.type, body.mode, body.onError, req.user.id, companyOf(req)), undefined, 201);
 });
 
 export const commit = asyncHandler(async (req, res) => {

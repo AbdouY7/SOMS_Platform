@@ -6,16 +6,16 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 const TEMPLATES = {
   social_posts: () => ({
-    header: ['platform', 'external_post_id', 'published_at', 'content_type', 'likes', 'comments', 'shares', 'views', 'clicks'],
-    example: ['instagram', 'ig_12345', today(), 'reel', 120, 14, 8, 2400, 65],
+    header: ['platform', 'external_post_id', 'published_at', 'content_type', 'caption_public', 'likes', 'comments', 'shares', 'views', 'reach', 'impressions', 'clicks'],
+    example: ['instagram', 'ig_12345', today(), 'reel', 'Sample caption', 120, 14, 8, 2400, 1800, 2200, 65],
   }),
   regional_metrics: () => ({
-    header: ['wilaya', 'metric_type', 'period_start', 'period_end', 'value'],
-    example: ['16', 'leads', today(), today(), 250],
+    header: ['wilaya', 'period_start', 'period_end', 'metric_type', 'metric_value'],
+    example: ['16', today(), today(), 'impressions', 2500],
   }),
   sales_records: () => ({
-    header: ['order_date', 'order_count', 'revenue'],
-    example: [today(), 42, 185000],
+    header: ['order_date', 'wilaya', 'product_category', 'order_count', 'revenue', 'acquisition_cost'],
+    example: [today(), '16', 'electronics', 42, 185000, 12000],
   }),
 };
 

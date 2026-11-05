@@ -5,6 +5,8 @@ import { seed, purge } from './demo.controller.js';
 
 const router = Router();
 router.use(requireAuth, requireRole('super_admin'));
+router.post('/:companyId', seed);
+router.delete('/:companyId', purge);
 router.post('/:companyId/seed', seed);
 router.post('/:companyId/purge', purge);
 

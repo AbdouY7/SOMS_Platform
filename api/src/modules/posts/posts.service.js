@@ -46,7 +46,7 @@ export async function list(filters = {}, companyId) {
 export async function create(data, companyId, actorId) {
   try {
     const post = await prisma.socialPost.create({
-      data: { ...data, companyId, sourceType: 'public_manual', createdBy: actorId },
+      data: { ...data, companyId, sourceType: 'public_manual' },
     });
     await record({
       actorUserId: actorId, companyId, action: 'post.created', entityType: 'SocialPost', entityId: post.id,

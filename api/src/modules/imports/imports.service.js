@@ -137,16 +137,20 @@ async function writeBatch(type, rows, mode, base) {
   }
 
   // sales_records
-  if (mode === 'append') return (await prisma.salesRecord.createMany({ data, skipDuplicates: true })).count;
-  await prisma.$transaction(
-    data.map((r) =>
-      prisma.salesRecord.upsert({
-        where: { companyId_orderDate: { companyId: r.companyId, orderDate: r.orderDate } },
-        create: r,
-        update: r,
-      })
-    )
-  );
+  if (mode === 'append') return (await prisma.salesRecord.createMany({ data })).count;
+  await prisma.$transaction(async (tx) => {
+    for (const r of data) {
+      await tx.salesRecord.deleteMany({
+        where: {
+          companyId: r.companyId,
+          orderDate: r.orderDate,
+          wilayaCode: r.wilayaCode ?? null,
+          productCategory: r.productCategory ?? null,
+        },
+      });
+      await tx.salesRecord.create({ data: r });
+    }
+  });
   return data.length;
 }
 
@@ -177,7 +181,7 @@ export async function commit(importId, companyId, actorId, options = {}) {
       throw new AppError('The uploaded file has expired. Upload it again.', 410, 'IMPORT_FILE_GONE');
     }
 
-    const v = await csvValidate(buffer, imp.type, { maxErrors: MAX_STORED_ERRORS });
+    const v = await csvValidate(buffer, imp.importType, { maxErrors: MAX_STORED_ERRORS });
 
     if (v.errors.length) {
       await prisma.dataImportError.createMany({
@@ -203,7 +207,7 @@ export async function commit(importId, companyId, actorId, options = {}) {
     const base = { companyId, importId, sourceType: 'csv_import' };
     let inserted = 0;
     for (const batch of chunk(v.validRows, BATCH_SIZE)) {
-      inserted += await writeBatch(imp.type, batch, mode, base);
+      inserted += await writeBatch(imp.importType, batch, mode, base);
     }
 
     await prisma.dataImport.update({
@@ -217,7 +221,7 @@ export async function commit(importId, companyId, actorId, options = {}) {
       action: 'import.committed',
       entityType: 'DataImport',
       entityId: importId,
-      metadata: { type: imp.type, mode, onError, accepted: inserted, rejected: v.rejectedRows },
+      metadata: { type: imp.importType, mode, onError, accepted: inserted, rejected: v.rejectedRows },
     });
 
     return {
@@ -241,7 +245,7 @@ export async function rollback(importId, companyId, actorId) {
   if (imp.status !== 'completed') {
     throw new AppError('Only completed imports can be rolled back', 409, 'IMPORT_NOT_COMPLETED');
   }
-  const model = MODELS[imp.type];
+  const model = MODELS[imp.importType];
 
   const deleted = await prisma.$transaction(async (tx) => {
     const res = await tx[model].deleteMany({ where: { companyId, importId } });
@@ -255,7 +259,7 @@ export async function rollback(importId, companyId, actorId) {
     action: 'import.rolled_back',
     entityType: 'DataImport',
     entityId: importId,
-    metadata: { type: imp.type, deleted },
+    metadata: { type: imp.importType, deleted },
   });
 
   return { importId, status: 'cancelled', deleted };
@@ -298,7 +302,7 @@ export async function buildErrorCsv(importId, companyId) {
   await findImport(importId, companyId);
   const errors = await prisma.dataImportError.findMany({
     where: { importId },
-    orderBy: [{ rowNumber: 'asc' }, { column: 'asc' }],
+    orderBy: [{ rowNumber: 'asc' }, { columnName: 'asc' }],
   });
   const header = ['row_number', 'column', 'error_code', 'message'];
   const lines = errors.map((e) => [e.rowNumber, e.columnName, e.errorCode, e.message].map(csvCell).join(','));

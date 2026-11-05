@@ -17,7 +17,7 @@ export const list = asyncHandler(async (req, res) => {
 
 export const create = asyncHandler(async (req, res) => {
   const { body } = parseRequest(createPostSchema, req);
-  ok(res, await postsService.create(body, companyOf(req), req.user.id), 201);
+  ok(res, await postsService.create(body, companyOf(req), req.user.id), undefined, 201);
 });
 
 export const update = asyncHandler(async (req, res) => {

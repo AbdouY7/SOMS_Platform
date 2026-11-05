@@ -21,7 +21,7 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/hub';
+  const from = location.state?.from?.pathname;
 
   const [showPw, setShowPw] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -35,8 +35,9 @@ export function LoginPage() {
   async function onSubmit(values) {
     setServerError('');
     try {
-      await login(values.email, values.password);
-      navigate(from, { replace: true });
+      const user = await login(values.email, values.password);
+      const destination = from || (user?.role === 'super_admin' ? '/admin/dashboard' : '/hub');
+      navigate(destination, { replace: true });
     } catch (err) {
       const code = err.response?.data?.error?.code;
       if (code === 'UNAUTHENTICATED') {

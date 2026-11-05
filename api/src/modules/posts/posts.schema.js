@@ -12,14 +12,17 @@ const publishedAt = z.coerce
 
 const postFields = {
   platform: z.enum(PLATFORMS),
-  externalPostId: z.preprocess(blankToNull, z.string().trim().max(120).nullish()),
+  externalPostId: z.preprocess(blankToNull, z.string().trim().max(100).nullish()),
   publishedAt,
   contentType: z.preprocess(blankToNull, z.enum(CONTENT_TYPES).nullish()),
-  likes: metric.default(0),
-  comments: metric.default(0),
-  shares: metric.default(0),
-  views: metric.default(0),
-  clicks: metric.default(0),
+  captionPublic: z.preprocess(blankToNull, z.string().trim().nullish()),
+  likes: metric.nullish(),
+  comments: metric.nullish(),
+  shares: metric.nullish(),
+  views: metric.nullish(),
+  reach: metric.nullish(),
+  impressions: metric.nullish(),
+  clicks: metric.nullish(),
 };
 
 export const createPostSchema = z.object({ body: z.object(postFields) });

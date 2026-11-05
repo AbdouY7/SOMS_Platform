@@ -7,13 +7,14 @@ const handler = (req, res) =>
 
 // Bypass rate limiting entirely in test environment
 const isTest = process.env.NODE_ENV === 'test';
+const isDev = process.env.NODE_ENV === 'development';
 const passThrough = (_req, _res, next) => next();
 
 /**
  * General rate limiter: 300 requests per 15 minutes per IP
  */
 export const general  = isTest ? passThrough : rateLimit({ windowMs: 15 * 60 * 1000, max: 300,  standardHeaders: true, legacyHeaders: false, handler });
-export const login    = isTest ? passThrough : rateLimit({ windowMs: 15 * 60 * 1000, max: 5,    standardHeaders: true, legacyHeaders: false, handler });
-export const register = isTest ? passThrough : rateLimit({ windowMs: 60 * 60 * 1000, max: 5,    standardHeaders: true, legacyHeaders: false, handler });
-export const refresh  = isTest ? passThrough : rateLimit({ windowMs: 15 * 60 * 1000, max: 30,   standardHeaders: true, legacyHeaders: false, handler });
-export const upload   = isTest ? passThrough : rateLimit({ windowMs: 60 * 60 * 1000, max: 20,   standardHeaders: true, legacyHeaders: false, handler });
+export const login    = isTest ? passThrough : rateLimit({ windowMs: 15 * 60 * 1000, max: isDev ? 100 : 5,    standardHeaders: true, legacyHeaders: false, handler });
+export const register = isTest ? passThrough : rateLimit({ windowMs: 60 * 60 * 1000, max: isDev ? 100 : 5,    standardHeaders: true, legacyHeaders: false, handler });
+export const refresh  = isTest ? passThrough : rateLimit({ windowMs: 15 * 60 * 1000, max: isDev ? 300 : 30,   standardHeaders: true, legacyHeaders: false, handler });
+export const upload   = isTest ? passThrough : rateLimit({ windowMs: 60 * 60 * 1000, max: isDev ? 100 : 20,   standardHeaders: true, legacyHeaders: false, handler });
