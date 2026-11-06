@@ -3,11 +3,19 @@
 import { prisma } from '../prisma.js';
 
 export async function getAdminDashboard() {
-  const [activeCompanies, pendingRequests, userGroups, recentActivity, pendingRequestsPreview] =
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  const [activeCompanies, pendingRequests, userGroups, activeSimulations, recentActivity, pendingRequestsPreview] =
     await Promise.all([
       prisma.company.count({ where: { status: 'active' } }),
       prisma.administrativeRequest.count({ where: { status: 'pending' } }),
       prisma.user.groupBy({ by: ['isActive'], _count: { _all: true } }),
+      prisma.campaignSimulation.count({
+        where: {
+          isArchived: false,
+          createdAt: { gte: thirtyDaysAgo },
+        },
+      }),
       prisma.activityLog.findMany({
         orderBy: { createdAt: 'desc' },
         take: 10,
@@ -32,7 +40,7 @@ export async function getAdminDashboard() {
     pendingRequests,
     totalUsers: activeUsers + inactiveUsers,
     activeUsers,
-    activeSimulations: 0, // 0 until System 8
+    activeSimulations,
     recentActivity,
     pendingRequestsPreview,
   };

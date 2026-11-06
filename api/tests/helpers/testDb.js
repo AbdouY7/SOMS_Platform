@@ -66,6 +66,8 @@ export async function cleanTestDb() {
   await testPrisma.regionalMetric.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
   await testPrisma.salesRecord.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
   await testPrisma.dataImport.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
+  // System 7 tables
+  await testPrisma.scheduledItem.deleteMany({ where: { company: { name: { startsWith: 'Test ' } } } });
   // Delete users before companies (FK + CHECK constraint requires company_id for non-super_admin)
   await testPrisma.user.deleteMany({ where: { email: { contains: 'test_' } } });
   await testPrisma.company.deleteMany({ where: { name: { startsWith: 'Test ' } } });

@@ -29,6 +29,14 @@ import { importsRouter } from './modules/imports/imports.routes.js';
 import { postsRouter }   from './modules/posts/posts.routes.js';
 import { wilayasRouter } from './modules/wilayas/wilayas.routes.js';
 import { demoRouter }    from './modules/demo/demo.routes.js';
+// System 5
+import { geoRouter }     from './modules/geo/geo.routes.js';
+// System 6
+import { growthRouter }  from './modules/growth/growth.routes.js';
+// System 7
+import { schedulerAnalyticsRouter, scheduleItemsRouter } from './modules/scheduler/scheduler.routes.js';
+// System 8
+import { forecastRouter } from './modules/forecast/forecast.routes.js';
 
 const app = express();
 
@@ -87,6 +95,15 @@ app.use('/api/imports',               importsRouter);
 app.use('/api/posts',                 postsRouter);
 app.use('/api/wilayas',               wilayasRouter);
 app.use('/api/admin/demo-data',       demoRouter);
+// System 5
+app.use('/api/analytics/geo',         geoRouter);
+// System 6
+app.use('/api/analytics/growth',      growthRouter);
+// System 7
+app.use('/api/analytics/scheduler',   schedulerAnalyticsRouter);
+app.use('/api/schedule/items',        scheduleItemsRouter);
+// System 8
+app.use('/api/forecast',              forecastRouter);
 
 // ── 404 for unmatched routes
 app.use(notFound);

@@ -38,8 +38,12 @@ def create_app():
         return jsonify({"status": "ok"})
 
     # Register compute blueprints (added per system)
-    # from routes.forecast import forecast_bp
-    # app.register_blueprint(forecast_bp, url_prefix="/compute")
+    from routes.opportunity import opportunity_bp
+    from routes.scheduler import scheduler_bp
+    from routes.forecast import forecast_bp
+    app.register_blueprint(opportunity_bp, url_prefix="/compute")
+    app.register_blueprint(scheduler_bp, url_prefix="/compute")
+    app.register_blueprint(forecast_bp, url_prefix="/compute")
 
     return app
 

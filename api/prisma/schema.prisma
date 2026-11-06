@@ -92,6 +92,14 @@ enum ReportType {
   combined
 }
 
+enum ReportType {
+  geo
+  growth
+  scheduler
+  forecast
+  combined
+}
+
 // ── System 1 Tables ───────────────────────────────────────────────────────────
 
 model Company {
@@ -116,6 +124,12 @@ model Company {
   socialPosts            SocialPost[]
   regionalMetrics        RegionalMetric[]
   salesRecords           SalesRecord[]
+  // System 7
+  scheduledItems         ScheduledItem[]
+  // System 8
+  simulations            CampaignSimulation[]
+  // System 9
+  reports                Report[]
 
   @@map("companies")
 }
@@ -144,6 +158,12 @@ model User {
   updatedSettings      SystemSetting[]
   // System 4
   dataImports          DataImport[]           @relation("ImportedBy")
+  // System 7
+  scheduledItems       ScheduledItem[]        @relation("ScheduledBy")
+  // System 8
+  simulations          CampaignSimulation[]   @relation("SimulationCreator")
+  // System 9
+  reports              Report[]               @relation("ReportCreator")
 
   @@index([companyId])
   @@map("users")
@@ -305,6 +325,7 @@ model SocialPost {
   company Company     @relation(fields: [companyId], references: [id])
   import  DataImport? @relation(fields: [importId], references: [id])
 
+  @@unique([companyId, platform, externalPostId], map: "uq_post_identity")
   @@index([companyId, platform, publishedAt(sort: Desc)])
   @@map("social_posts")
 }
@@ -348,3 +369,72 @@ model SalesRecord {
   @@index([companyId, orderDate(sort: Desc)])
   @@map("sales_records")
 }
+
+// ── System 7 Tables ───────────────────────────────────────────────────────────
+model ScheduledItem {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId   String       @map("company_id") @db.Uuid
+  platform    Platform
+  plannedAt   DateTime     @map("planned_at") @db.Timestamptz
+  title       String       @db.VarChar(150)
+  contentType ContentType? @map("content_type")
+  notes       String?      @db.Text
+  status      String       @default("planned") @db.VarChar(12) // 'planned' | 'done' | 'cancelled'
+  createdBy   String?      @map("created_by") @db.Uuid
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  company Company @relation(fields: [companyId], references: [id])
+  creator User?   @relation("ScheduledBy", fields: [createdBy], references: [id])
+
+  @@index([companyId, plannedAt])
+  @@map("scheduled_items")
+}
+
+// ── System 8 Tables ───────────────────────────────────────────────────────────
+model CampaignSimulation {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String   @map("company_id") @db.Uuid
+  name            String   @db.VarChar(120)
+  budget          Decimal? @db.Decimal(14, 2)
+  startDate       DateTime @map("start_date") @db.Date
+  durationDays    Int      @map("duration_days")
+  assumptionsJson Json     @map("assumptions_json")
+  scenarioJson    Json     @map("scenario_json")
+  isArchived      Boolean  @default(false) @map("is_archived")
+  createdBy       String?  @map("created_by") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator User?   @relation("SimulationCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([companyId, isArchived])
+  @@index([companyId, createdAt(sort: Desc)])
+  @@map("campaign_simulations")
+}
+
+// ── System 9 Tables ───────────────────────────────────────────────────────────
+model Report {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId    String      @map("company_id") @db.Uuid
+  createdBy    String?     @map("created_by") @db.Uuid
+  reportType   ReportType  @map("report_type")
+  title        String      @db.VarChar(150)
+  periodStart  DateTime?   @map("period_start") @db.Date
+  periodEnd    DateTime?   @map("period_end") @db.Date
+  filtersJson  Json        @default("{}") @map("filters_json")
+  dataMode     String      @default("real") @map("data_mode") @db.VarChar(5) // 'real' | 'demo'
+  snapshotJson Json        @map("snapshot_json")
+  sourcesJson  Json        @default("{}") @map("sources_json")
+  fileUrl      String?     @map("file_url") @db.Text
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator User?   @relation("ReportCreator", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([companyId, createdAt(sort: Desc)])
+  @@index([companyId, reportType])
+  @@map("reports")
+}
+
