@@ -1,8 +1,12 @@
--- CreateEnum
-CREATE TYPE "ReportType" AS ENUM ('geo', 'growth', 'scheduler', 'forecast', 'combined');
+-- CreateEnum if not exists
+DO $$ BEGIN
+    CREATE TYPE "ReportType" AS ENUM ('geo', 'growth', 'scheduler', 'forecast', 'combined');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- CreateTable
-CREATE TABLE "reports" (
+CREATE TABLE IF NOT EXISTS "reports" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "company_id" UUID NOT NULL,
     "created_by" UUID,
@@ -21,13 +25,21 @@ CREATE TABLE "reports" (
 );
 
 -- CreateIndex
-CREATE INDEX "reports_company_id_created_at_idx" ON "reports"("company_id", "created_at" DESC);
+CREATE INDEX IF NOT EXISTS "reports_company_id_created_at_idx" ON "reports"("company_id", "created_at" DESC);
 
 -- CreateIndex
-CREATE INDEX "reports_company_id_report_type_idx" ON "reports"("company_id", "report_type");
+CREATE INDEX IF NOT EXISTS "reports_company_id_report_type_idx" ON "reports"("company_id", "report_type");
 
 -- AddForeignKey
-ALTER TABLE "reports" ADD CONSTRAINT "reports_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "companies"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "reports" ADD CONSTRAINT "reports_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "companies"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- AddForeignKey
-ALTER TABLE "reports" ADD CONSTRAINT "reports_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ BEGIN
+    ALTER TABLE "reports" ADD CONSTRAINT "reports_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;

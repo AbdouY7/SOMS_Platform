@@ -1,0 +1,83 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-soms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-soms}
+    volumes:
+      - soms_pgdata_prod:/var/lib/postgresql/data
+    networks:
+      - soms_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-soms} -d ${POSTGRES_DB:-soms}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  analytics:
+    build:
+      context: ./analytics
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY}
+      - FLASK_ENV=production
+    networks:
+      - soms_internal
+    # Notice: No published ports. Accessible ONLY by the API service within soms_internal network.
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-soms}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-soms}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_ACCESS_TTL=15m
+      - REFRESH_TTL_DAYS=7
+      - COOKIE_SECURE=true
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost}
+      - SUPERADMIN_EMAIL=${SUPERADMIN_EMAIL}
+      - SUPERADMIN_PASSWORD=${SUPERADMIN_PASSWORD}
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY}
+      - ANALYTICS_URL=http://analytics:5000
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      analytics:
+        condition: service_started
+    networks:
+      - soms_internal
+      - soms_public
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - soms_public
+
+networks:
+  soms_internal:
+    internal: true
+  soms_public:
+    driver: bridge
+
+volumes:
+  soms_pgdata_prod:
+

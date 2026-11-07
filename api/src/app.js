@@ -37,6 +37,9 @@ import { growthRouter }  from './modules/growth/growth.routes.js';
 import { schedulerAnalyticsRouter, scheduleItemsRouter } from './modules/scheduler/scheduler.routes.js';
 // System 8
 import { forecastRouter } from './modules/forecast/forecast.routes.js';
+// System 9
+import { hubRouter }     from './modules/hub/hub.routes.js';
+import { reportsRouter } from './modules/reports/reports.routes.js';
 
 const app = express();
 
@@ -104,6 +107,9 @@ app.use('/api/analytics/scheduler',   schedulerAnalyticsRouter);
 app.use('/api/schedule/items',        scheduleItemsRouter);
 // System 8
 app.use('/api/forecast',              forecastRouter);
+// System 9
+app.use('/api/hub',                   hubRouter);
+app.use('/api/reports',               reportsRouter);
 
 // ── 404 for unmatched routes
 app.use(notFound);

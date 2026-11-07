@@ -92,14 +92,6 @@ enum ReportType {
   combined
 }
 
-enum ReportType {
-  geo
-  growth
-  scheduler
-  forecast
-  combined
-}
-
 // ── System 1 Tables ───────────────────────────────────────────────────────────
 
 model Company {

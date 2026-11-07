@@ -11,7 +11,6 @@ import { LoginPage } from '../pages/LoginPage.jsx';
 import { RegisterPage } from '../pages/RegisterPage.jsx';
 import { RegisterSuccessPage } from '../pages/RegisterSuccessPage.jsx';
 import { ProfilePage } from '../pages/ProfilePage.jsx';
-import { HubPlaceholder } from '../pages/HubPlaceholder.jsx';
 // System 2
 import { AdminRequestsPage } from '../pages/admin/AdminRequestsPage.jsx';
 import { AdminCompaniesPage } from '../pages/admin/AdminCompaniesPage.jsx';
@@ -40,6 +39,11 @@ import SchedulePlanPage from '../pages/data/SchedulePlanPage.jsx';
 import ForecastPage from '../pages/data/ForecastPage.jsx';
 import ForecastSimulatorPage from '../pages/data/ForecastSimulatorPage.jsx';
 import ForecastComparePage from '../pages/data/ForecastComparePage.jsx';
+// System 9
+import HubPage from '../pages/data/HubPage.jsx';
+import ReportsPage from '../pages/data/ReportsPage.jsx';
+import ReportWizardPage from '../pages/data/ReportWizardPage.jsx';
+import ReportViewerPage from '../pages/data/ReportViewerPage.jsx';
 
 const SUPER   = ['super_admin'];
 const COMPANY = ['company_admin', 'analyst', 'viewer'];
@@ -65,7 +69,7 @@ export const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           // Company analytics routes
-          { path: '/hub',                  element: <RoleGuard roles={COMPANY}><HubPlaceholder /></RoleGuard> },
+          { path: '/hub',                  element: <RoleGuard roles={COMPANY}><HubPage /></RoleGuard> },
           { path: '/analytics/geo',        element: <RoleGuard roles={ALL}><GeoAnalyticsPage /></RoleGuard> },
           { path: '/analytics/growth',     element: <RoleGuard roles={ALL}><GrowthAnalyticsPage /></RoleGuard> },
           { path: '/analytics/scheduler',  element: <RoleGuard roles={ALL}><SchedulerPage /></RoleGuard> },
@@ -74,7 +78,9 @@ export const router = createBrowserRouter([
           { path: '/forecast/new',         element: <RoleGuard roles={['company_admin', 'analyst', ...SUPER]}><ForecastSimulatorPage /></RoleGuard> },
           { path: '/forecast/compare',     element: <RoleGuard roles={ALL}><ForecastComparePage /></RoleGuard> },
           { path: '/forecast/:id',         element: <RoleGuard roles={ALL}><ForecastSimulatorPage /></RoleGuard> },
-          { path: '/reports',              element: <RoleGuard roles={ALL}><HubPlaceholder /></RoleGuard> },
+          { path: '/reports',              element: <RoleGuard roles={ALL}><ReportsPage /></RoleGuard> },
+          { path: '/reports/new',          element: <RoleGuard roles={['company_admin', 'analyst', ...SUPER]}><ReportWizardPage /></RoleGuard> },
+          { path: '/reports/:id',          element: <RoleGuard roles={ALL}><ReportViewerPage /></RoleGuard> },
           { path: '/data/imports',         element: <RoleGuard roles={COMPANY}><ImportsPage /></RoleGuard> },
           { path: '/data/imports/new',      element: <RoleGuard roles={COMPANY}><ImportWizardPage /></RoleGuard> },
           { path: '/data/imports/:id',      element: <RoleGuard roles={COMPANY}><ImportDetailPage /></RoleGuard> },
